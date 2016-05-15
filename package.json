@@ -1,5 +1,5 @@
 {
-  "name": "gulp-shopify-upload",
+  "name": "gulp-shopify-delayed-upload",
   "version": "2.0.0",
   "description": "A tool to watch and upload files to Shopify for use in theme editing",
   "keywords": [
@@ -9,13 +9,13 @@
     "shopify-theme",
     "ablesense"
   ],
-  "homepage": "https://github.com/mikenorthorp/gulp-shopify-upload",
+  "homepage": "https://github.com/agrozyme/gulp-shopify-delayed-upload",
   "bugs": {
-    "url": "https://github.com/mikenorthorp/gulp-shopify-upload/issues"
+    "url": "https://github.com/agrozyme/gulp-shopify-delayed-upload/issues"
   },
   "author": {
-    "name": "Able Sense Media",
-    "url": "http://ablesense.com"
+    "name": "agrozyme",
+    "url": "https://github.com/agrozyme"
   },
   "contributors": [
     {
@@ -32,14 +32,16 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/mikenorthorp/gulp-shopify-upload.git"
+    "url": "https://github.com/agrozyme/gulp-shopify-delayed-upload.git"
   },
   "dependencies": {
+    "gulp-util": "3.0.2",
+    "inquirer": "0.12.0",
     "isbinaryfile": "2.0.0",
+    "open": "0.0.5",
     "path": "0.11.14",
     "shopify-api": "0.2.2",
-    "through2": "0.6.3",
-    "gulp-util": "3.0.2"
+    "through2": "0.6.3"
   },
   "devDependencies": {
     "gulp": "3.8.10"
@@ -55,8 +57,8 @@
   ],
   "maintainers": [
     {
-      "name": "mikenorthorp",
-      "email": "mike.northorp@gmail.com"
+      "name": "agrozyme",
+      "email": "agrozyme@gmail.com"
     }
   ],
   "scripts": {}
