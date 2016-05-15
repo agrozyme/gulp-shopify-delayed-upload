@@ -1,9 +1,9 @@
-gulp-shopify-upload-with-callbacks
+gulp-shopify-delayed-upload
 ===================
 
 ## Introduction
 
-**gulp-shopify-upload-with-callbacks** is a [Gulpjs](https://github.com/gulpjs/gulp) plugin forked from https://github.com/mikenorthorp/gulp-shopify-upload and then augmented to allow for callbacks after a file has been uploaded.
+**gulp-shopify-delayed-upload** is a [Gulpjs](https://github.com/gulpjs/gulp) plugin forked from https://github.com/mikenorthorp/gulp-shopify-upload and then augmented to allow for callbacks after a file has been uploaded.
 
 That project was a port of a similar plugin using Grunt called [grunt-shopify](https://github.com/wilr/grunt-shopify), thank you to the author for making a great plugin for Shopify.
 
@@ -86,4 +86,4 @@ gulp.task('deploy', ['build'], function() {
 });
 ```
 
-*Created by [Able Sense Media](http://ablesense.com) - 2015*
+*Created by [agrozyme](https://github.com/agrozyme) - 2016*
