@@ -1,33 +1,28 @@
 'use strict';
 
-var $ = {
-  async: require('asyncawait/async'),
-  await: require('asyncawait/await'),
-  promise: require('bluebird'),
-  through: require('through2'),
-  gulpUtil: require('gulp-util'),
-  inquirer: require('inquirer'),
-  path: require('path'),
-  open: require('open'),
-  shopify: require('shopify-api-node')
-};
+var $ = require('gulp-load-plugins')({
+  pattern: ['*'], replaceString: /^_/, rename: {
+    'bluebird': 'promise', 'shopify-api-node': 'shopify'
+  }
+});
 
-$.shopifyUpload = function(options) {
-  if (false === this instanceof $.shopifyUpload) {
-    return new $.shopifyUpload(options);
+$.async = $.asyncawait.async;
+$.await = $.asyncawait.await;
+
+$.gulpShopifyDelayedUpload = function(options) {
+  if (false === this instanceof $.gulpShopifyDelayedUpload) {
+    return new $.gulpShopifyDelayedUpload(options);
   }
 
   var that = this;
-  var prototype = $.shopifyUpload.prototype;
+  var prototype = $.gulpShopifyDelayedUpload.prototype;
   var self = {};
 
   const pluginName = 'gulp-shopify-delayed-updateAsset';
 
   self.options = {
-    key: '', pass: '', name: '', themeid: '', basePath: '', host: '', preview: ''
+    key: '', pass: '', name: '', themeid: '', themename: '', basePath: '', host: '', preview: '', openBrowser: false
   };
-
-  self.last = 0;
 
   /** @prop {$.shopify} that.api */
   self.api = false;
@@ -296,7 +291,7 @@ $.shopifyUpload = function(options) {
     //   console.log(data);
     // });
 
-    return $.through.obj(function(file, encoding, callback) {
+    return $.through2.obj(function(file, encoding, callback) {
       var item = this;
 
       that.uploadFile(file, encoding, function() {
@@ -309,4 +304,4 @@ $.shopifyUpload = function(options) {
   return that.constructor(options);
 };
 
-module.exports = $.shopifyUpload;
+module.exports = $.gulpShopifyDelayedUpload;

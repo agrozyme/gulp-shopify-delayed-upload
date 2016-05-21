@@ -3,40 +3,29 @@
   "version": "2.1.0",
   "description": "A tool to watch and upload files to Shopify for use in theme editing",
   "keywords": [
-    "gulp",
-    "shopify",
-    "shopify-upload",
-    "shopify-theme",
-    "ablesense"
+    "gulp", "shopify", "shopify-upload", "shopify-theme", "ablesense"
   ],
   "homepage": "https://github.com/agrozyme/gulp-shopify-delayed-upload",
   "bugs": {
     "url": "https://github.com/agrozyme/gulp-shopify-delayed-upload/issues"
   },
   "author": {
-    "name": "agrozyme",
-    "url": "https://github.com/agrozyme"
+    "name": "agrozyme", "url": "https://github.com/agrozyme"
   },
   "contributors": [
     {
-      "name": "Mike Northorp",
-      "email": "mike.northorp@gmail.com",
-      "url": "https://github.com/mikenorthorp"
-    },
-    {
-      "name": "Roy Martin",
-      "email": "roy@roy-martin.com",
-      "url": "https://github.com/rmartin"
+      "name": "Mike Northorp", "email": "mike.northorp@gmail.com", "url": "https://github.com/mikenorthorp"
+    }, {
+      "name": "Roy Martin", "email": "roy@roy-martin.com", "url": "https://github.com/rmartin"
     }
   ],
   "main": "index.js",
   "repository": {
-    "type": "git",
-    "url": "https://github.com/agrozyme/gulp-shopify-delayed-upload.git"
+    "type": "git", "url": "https://github.com/agrozyme/gulp-shopify-delayed-upload.git"
   },
   "dependencies": {
     "asyncawait": "^1.0.3",
-    "gulp-util": "^3.0.7",
+    "gulp-load-plugins": "^1.2.2",
     "inquirer": "^1.0.2",
     "open": "0.0.5",
     "path": "^0.12.7",
@@ -44,11 +33,10 @@
     "through2": "^2.0.1"
   },
   "devDependencies": {
-    "gulp": "3.8.10"
+    "bluebird": "^3.4.0", "gulp": "3.8.10", "gulp-util": "^3.0.7"
   },
   "engines": {
-    "node": ">=4.0.0",
-    "npm": ">=3.0.0"
+    "node": ">=4.0.0", "npm": ">=3.0.0"
   },
   "licenses": [
     {
@@ -57,8 +45,7 @@
   ],
   "maintainers": [
     {
-      "name": "agrozyme",
-      "email": "agrozyme@gmail.com"
+      "name": "agrozyme", "email": "agrozyme@gmail.com"
     }
   ],
   "scripts": {}
