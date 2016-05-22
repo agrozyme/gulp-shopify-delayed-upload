@@ -8,27 +8,28 @@ var $ = require('gulp-load-plugins')({
 
 $.async = $.asyncawait.async;
 $.await = $.asyncawait.await;
+$.path = require('path');
 
 $.gulpShopifyDelayedUpload = function(options) {
   if (false === this instanceof $.gulpShopifyDelayedUpload) {
     return new $.gulpShopifyDelayedUpload(options);
   }
 
-  var that = this;
-  var prototype = $.gulpShopifyDelayedUpload.prototype;
+  const that = this;
+  const prototype = $.gulpShopifyDelayedUpload.prototype;
   var self = {};
 
-  const pluginName = 'gulp-shopify-delayed-updateAsset';
+  const pluginName = 'gulp-shopify-delayed-upload';
 
   self.options = {
-    key: '', pass: '', name: '', themeid: '', themename: '', basePath: '', host: '', preview: '', openBrowser: false
+    key: '', pass: '', name: '', theme_id: '', theme_name: '', basePath: '', host: '', preview: '', openBrowser: false
   };
 
   /** @prop {$.shopify} that.api */
   self.api = false;
 
   prototype.constructor = function(options) {
-    var that = this;
+    const that = this;
     that.setOptions(options);
     return that;
   };
@@ -52,7 +53,7 @@ $.gulpShopifyDelayedUpload = function(options) {
     }
 
     items.host = items.name + '.myshopify.com';
-    items.preview = 'http://' + items.host + '?preview_theme_id=' + items.themeid;
+    items.preview = 'http://' + items.host + '?preview_theme_id=' + items.theme_id;
     items.basePath = (0 < items.basePath.length) ? $.path.resolve(items.basePath) : process.cwd();
     return items;
   };
@@ -113,7 +114,7 @@ $.gulpShopifyDelayedUpload = function(options) {
     data.asset.attachment = file.contents.toString('base64');
     that.log('Upload Start:  ' + filename, colors.gray);
 
-    var action = that.getApi().asset.update(self.options.themeid, data.asset).then(function(data) {
+    var action = that.getApi().asset.update(self.options.theme_id, data.asset).then(function(data) {
       that.log('Upload Finish: ' + filename, colors.green);
       return data;
     }).catch(function(error) {
@@ -134,7 +135,7 @@ $.gulpShopifyDelayedUpload = function(options) {
 
     that.log('Delete Start:  ' + filename, colors.red);
 
-    var action = that.getApi().asset.delete(self.options.themeid, data).then(function(data) {
+    var action = that.getApi().asset.delete(self.options.theme_id, data).then(function(data) {
       that.log('Delete Finish: ' + filename, colors.green);
       return data;
     }).catch(function(error) {
@@ -155,12 +156,12 @@ $.gulpShopifyDelayedUpload = function(options) {
     items.push(colors.gray('Connected to: ') +
       colors.magenta(options.host) +
       colors.gray(' theme id: ') +
-      colors.magenta(options.themeid) +
+      colors.magenta(options.theme_id) +
       colors.gray(' theme name: ') +
-      colors.magenta(options.themename));
+      colors.magenta(options.theme_name));
 
     items.push(colors.gray('Browser to: ') +
-      colors.magenta('http://' + options.host + '?preview_theme_id=' + options.themeid));
+      colors.magenta('http://' + options.host + '?preview_theme_id=' + options.theme_id));
 
     items.forEach(function(item) {
       $.gulpUtil.log(item);
@@ -232,12 +233,12 @@ $.gulpShopifyDelayedUpload = function(options) {
     var options = that.getOptions();
     var themes = $.await(that.getThemes());
 
-    if (themes.hasOwnProperty(options.themeid)) {
-      options.themename = themes[options.themeid].name;
+    if (themes.hasOwnProperty(options.theme_id)) {
+      options.theme_name = themes[options.theme_id].name;
     } else {
       var data = $.await(that.selectTheme(themes));
-      options.themeid = data.id;
-      options.themename = data.name;
+      options.theme_id = data.id;
+      options.theme_name = data.name;
     }
 
     that.setOptions(options);
@@ -256,7 +257,7 @@ $.gulpShopifyDelayedUpload = function(options) {
       return false;
     }
 
-    if ((null === options.themeid) || (-1 !== file.path.indexOf('.DS_Store'))) {
+    if ((null === options.theme_id) || (-1 !== file.path.indexOf('.DS_Store'))) {
       return false;
     }
 
@@ -265,21 +266,23 @@ $.gulpShopifyDelayedUpload = function(options) {
 
   prototype.uploadFile = function(file, encoding, callback) {
     var that = this;
+    var useCallback = ('function' === typeof callback) ? callback : function() {
+    };
 
     if (false === that.validateUploadFile(file)) {
-      callback();
+      useCallback();
       return;
     }
 
     if (file.isBuffer()) {
       that.updateAsset(file).then(function() {
-        callback();
+        useCallback();
       });
     }
 
     if (file.isNull()) {
       that.deleteAsset(file).then(function() {
-        callback();
+        useCallback();
       });
     }
   };
