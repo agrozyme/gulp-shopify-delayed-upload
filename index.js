@@ -17,16 +17,22 @@ $.gulpShopifyDelayedUpload = function(options) {
 
   const that = this;
   const prototype = $.gulpShopifyDelayedUpload.prototype;
+  const pluginName = 'gulp-shopify-delayed-upload';
+
   var self = {};
 
-  const pluginName = 'gulp-shopify-delayed-upload';
+  /** @prop {$.shopify} that.api */
+  self.api = false;
+
+  self.isWatch = false;
+
+  self.count = {stream: 0, buffer: 0, empty: 0};
+
+  self.error = {stream: [], buffer: [], empty: []};
 
   self.options = {
     key: '', pass: '', name: '', theme_id: '', theme_name: '', basePath: '', host: '', preview: '', openBrowser: false
   };
-
-  /** @prop {$.shopify} that.api */
-  self.api = false;
 
   prototype.constructor = function(options) {
     const that = this;
@@ -244,63 +250,102 @@ $.gulpShopifyDelayedUpload = function(options) {
     that.setOptions(options);
     that.validateOptions();
     that.showConnectionMessage();
+
+    if (options.openBrowser) {
+      $.open(options.preview);
+    }
   });
 
   prototype.validateUploadFile = function(file) {
     var that = this;
     var options = self.options;
-    var colors = $.gulpUtil.colors;
-
-    if (file.isStream()) {
-      that.log('Streams are not supported!', colors.red);
-      // this.emit('error', new $.gulpUtil.PluginError(pluginName, 'Streams are not supported!'));
-      return false;
-    }
-
-    if ((null === options.theme_id) || (-1 !== file.path.indexOf('.DS_Store'))) {
-      return false;
-    }
-
-    return true;
+    var test = true;
+    test = test && (false === file.isDirectory());
+    test = test && (null !== options.theme_id);
+    test = test && (-1 === file.path.indexOf('.DS_Store'));
+    return test;
   };
 
-  prototype.uploadFile = function(file, encoding, callback) {
+  prototype.getFileType = function(file) {
+    var types = {stream: file.isStream(), buffer: file.isBuffer(), empty: file.isNull()};
+
+    for (var index in types) {
+      if (types.hasOwnProperty(index) && types[index]) {
+        return index;
+      }
+    }
+
+    return '';
+  };
+
+  prototype.uploadFile = function(file, encoding, callback, stream) {
     var that = this;
-    var useCallback = ('function' === typeof callback) ? callback : function() {
+    var count = self.count;
+    var errorFiles = self.error;
+    var type = that.getFileType(file);
+
+    var doCatch = function(error) {
+      var colors = $.gulpUtil.colors;
+      that.log(error.message, colors.red);
+
+      if (errorFiles.hasOwnProperty(type)) {
+        errorFiles[type].push(file.path);
+      }
+    };
+
+    var doFinally = function() {
+      if ((false === file.isDirectory()) && count.hasOwnProperty(type)) {
+        count[type]--;
+      }
+
+      stream.push(file);
+      that.showCountMessage();
+      callback();
     };
 
     if (false === that.validateUploadFile(file)) {
-      useCallback();
+      doFinally();
       return;
     }
 
+    if (count.hasOwnProperty(type)) {
+      count[type]++;
+    }
+
+    if (file.isStream()) {
+      // this.emit('error', new $.gulpUtil.PluginError(pluginName, 'Streams are not supported!'));
+      doCatch(new Error('Streams are not supported!'));
+      doFinally();
+    }
+
     if (file.isBuffer()) {
-      that.updateAsset(file).then(function() {
-        useCallback();
-      });
+      that.updateAsset(file).catch(doCatch).finally(doFinally);
     }
 
     if (file.isNull()) {
-      that.deleteAsset(file).then(function() {
-        useCallback();
-      });
+      that.deleteAsset(file).catch(doCatch).finally(doFinally);
     }
+  };
+
+  prototype.showCountMessage = function() {
+    var that = this;
+    var count = self.count;
+    var colors = $.gulpUtil.colors;
+    var text = colors.gray('Stream count: ') +
+      colors.magenta(count.stream) +
+      colors.gray(' Buffer count: ') +
+      colors.magenta(count.buffer) +
+      colors.gray(' Empty count: ') +
+      colors.magenta(count.empty);
+    that.log(text);
   };
 
   prototype.streamUpload = function() {
     var that = this;
 
-    // that.prepareUpload().then(function(data) {
-    //   console.log(data);
-    // });
-
     return $.through2.obj(function(file, encoding, callback) {
-      var item = this;
-
-      that.uploadFile(file, encoding, function() {
-        item.push(file);
-        callback();
-      });
+      var stream = this;
+      that.uploadFile(file, encoding, callback, stream);
     });
   };
 
