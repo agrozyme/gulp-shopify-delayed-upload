@@ -1,14 +1,11 @@
 'use strict';
 
-var $ = require('gulp-load-plugins')({
-  pattern: ['*'], replaceString: /^_/, rename: {
-    'bluebird': 'promise', 'shopify-api-node': 'shopify'
-  }
+var $ = require('autoload-modules')({
+  mapping: {'promise': require('bluebird'), 'shopify': 'shopify-api-node'}
 });
 
 $.async = $.asyncawait.async;
 $.await = $.asyncawait.await;
-$.path = require('path');
 
 $.gulpShopifyDelayedUpload = function(options) {
   if (false === this instanceof $.gulpShopifyDelayedUpload) {

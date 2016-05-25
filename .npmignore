@@ -1,6 +1,6 @@
-node_modules/
-theme/
+.git/
 .idea/
-npm-debug.log
-tmp
+node_modules/
+.npmrc
+.DS_Store
 *.log

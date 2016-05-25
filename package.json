@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "asyncawait": "^1.0.3",
-    "gulp-load-plugins": "^1.2.2",
+    "autoload-modules": "^1.0.1",
     "inquirer": "^1.0.2",
     "open": "0.0.5",
     "shopify-api-node": "https://github.com/microapps/Shopify-api-node/archive/master.tar.gz",
